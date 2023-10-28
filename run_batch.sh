@@ -9,7 +9,7 @@ for sequence_name in "${list[@]}"
 do
     echo "Processing $sequence_name"
     input="/workspace/data/${sequence_name}.bag"
-    output="/workspace/data/${sequence_name_anonymized}.bag"
+    output="/workspace/data/${sequence_name}_anonymized.bag"
     echo "Input: $input"
     echo "Output: $output"
 
