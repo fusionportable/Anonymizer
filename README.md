@@ -8,7 +8,7 @@
   ```
 - Build Docker Container
   ```bash
-  docker build -t ros-noetic-miniconda:latest
+  docker build -t ros-noetic-miniconda:latest .
   # if build failed pull from docker hub
   docker pull 11710414/ros-noetic-miniconda:latest
   ```
@@ -31,6 +31,36 @@ cd /workspace/anonymizer
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
+
+## Run on Server13
+- create docker container
+```shell
+# data pwd: /data_shared/Data/jjiao/dataset/FusionPortable_dataset_develop/sensor_data
+cd /pwd_code/
+docker run -it --name anonymizer -v $PWD:/workspace/anonymizer -v /data_shared/Data/jjiao/dataset/FusionPortable_dataset_develop/sensor_data:/workspace/anonymizer/data  11710414/ros-noetic-miniconda:latest /bin/bash 
+```
+- create conda env as mentioned 
+```shell
+conda create --name anonymizer python=3.6 -y
+conda activate anonymizer
+cd /workspace/anonymizer
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+- run sequences
+```shell
+cd /workspace/anonymizer
+python anonymizer/bin/anonymize_bag.py --input data/folder/to/bag/*.bag --output data/folder/to/bag/*.bag --weights weights/
+```
+
+## First batch of processing (Evaluated seq on Paper)
+```
+Handheld: starbucks00 (running on server13 now), room00
+Quadruped Robot: grass01, room00
+Mini Hercules: campus00, parking00
+Vehicle: campus00, highway00
+```
+
 
 
 ## Notes

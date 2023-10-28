@@ -17,7 +17,7 @@ def parse_args():
                         help='Path to a folder that contains the rosbags that should be anonymized. '
                                 'rosbags can be arbitrarily nested in subfolders and will still be found.')
     parser.add_argument('--output', required=True,
-                        metavar='/path/to/output_foler',
+                        metavar='/path/to/output bag path/',
                         help='Path to the folder the anonymized rosbags should be written to. '
                                 'Will mirror the folder structure of the input folder.')
     parser.add_argument('--weights', required=True,
