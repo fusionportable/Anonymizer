@@ -25,7 +25,6 @@ def draw_bbox(image, bbox):
     cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
 
 
-
 if __name__  == "__main__":
     image = cv2.imread("test_data/left.png")
     bbox = [0, 0, 100, 100]

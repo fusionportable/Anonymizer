@@ -14,8 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-
 import argparse
+import sys
+sys.path.append('../anonymizer')
 
 from anonymizer.anonymization import Anonymizer
 from anonymizer.detection import Detector, download_weights, get_weights_path

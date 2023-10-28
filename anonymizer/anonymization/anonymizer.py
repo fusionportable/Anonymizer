@@ -37,16 +37,31 @@ class Anonymizer:
         self.detectors = detectors
         self.obfuscator = obfuscator
 
-    def anonymize_image(self, image, detection_thresholds):
+    def anonymize_image(self, image, detection_thresholds, mask = None):
         assert set(self.detectors.keys()) == set(detection_thresholds.keys()),\
             'Detector names must match detection threshold names'
         detected_boxes = []
         for kind, detector in self.detectors.items():
             new_boxes = detector.detect(image, detection_threshold=detection_thresholds[kind])
+            if kind == "plate":
+                if mask is not None:
+                    x_min, y_min, x_max, y_max = mask.split(',')
+                    x_min = int(x_min)
+                    y_min = int(y_min)
+                    x_max = int(x_max)
+                    y_max = int(y_max)
+                    masked_boxes = []
+                    for new_box in new_boxes:
+                        x_min_new, y_min_new, x_max_new, y_max_new = new_box.x_min, new_box.y_min, new_box.x_max, new_box.y_max
+                        lower_bound = x_min_new >= x_min and y_min_new >= y_min
+                        higher_bound = x_max_new <= x_max and y_max_new <= y_max
+                        if not (lower_bound and higher_bound):
+                            masked_boxes.append(new_box)
+                    new_boxes = masked_boxes
             detected_boxes.extend(new_boxes)
         return self.obfuscator.obfuscate(image, detected_boxes), detected_boxes
 
-    def anonymize_images(self, input_path, output_path, detection_thresholds, file_types, write_json):
+    def anonymize_images(self, input_path, output_path, detection_thresholds, file_types, write_json, mask):
         print(f'Anonymizing images in {input_path} and saving the anonymized images to {output_path}...')
 
         Path(output_path).mkdir(exist_ok=True)
@@ -54,7 +69,11 @@ class Anonymizer:
 
         files = []
         for file_type in file_types:
+            print(list(Path(input_path).glob(f'**/*.{file_type}')))
             files.extend(list(Path(input_path).glob(f'**/*.{file_type}')))
+        
+        print(len(files))
+        print(files)
 
         for input_image_path in tqdm(files):
             # Create output directory
@@ -65,7 +84,7 @@ class Anonymizer:
 
             # Anonymize image
             image = load_np_image(str(input_image_path))
-            anonymized_image, detections = self.anonymize_image(image=image, detection_thresholds=detection_thresholds)
+            anonymized_image, detections = self.anonymize_image(image=image, detection_thresholds=detection_thresholds, mask=mask)
             save_np_image(image=anonymized_image, image_path=str(output_image_path))
             if write_json:
                 save_detections(detections=detections, detections_path=str(output_detections_path))

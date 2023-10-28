@@ -1,9 +1,11 @@
+import sys
+sys.path.append('../anonymizer')
 import argparse
 import rosbag
 from tqdm import tqdm
 
 from anonymizer.anonymization import Anonymizer
-from anonymizer.detection import Detector, download_weights, get_weights_path
+from anonymizer.detection import Detector, get_weights_path
 from anonymizer.obfuscation import Obfuscator
 from anonymizer.utils import load_bag_msg, convert_img_to_ros_img, convert_ros_img_to_img
 
@@ -62,8 +64,8 @@ def main(input_bag: rosbag.Bag, output_bag: rosbag.Bag, weights_path: str):
         _ , msg_right, _ = right
         image_left = convert_ros_img_to_img(msg_left, 'bgr8', True)
         image_right = convert_ros_img_to_img(msg_right, 'bgr8', True)
-        anonymized_image_left, detections_left = anonymizer.anonymize_image(image_left, detection_thresholds)
-        anonymized_image_right, detections_right = anonymizer.anonymize_image(image_right, detection_thresholds)
+        anonymized_image_left, _ = anonymizer.anonymize_image(image_left, detection_thresholds)
+        anonymized_image_right, _ = anonymizer.anonymize_image(image_right, detection_thresholds)
         ros_image_left = convert_img_to_ros_img(anonymized_image_left, 'bgr8', msg_left.header, True)
         ros_image_right = convert_img_to_ros_img(anonymized_image_right, 'bgr8', msg_right.header, True)
         output_bag.write(topic_left, ros_image_left, ros_image_left.header.stamp)

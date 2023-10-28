@@ -17,16 +17,17 @@
 # one shot run
 docker run -it --rm -v $PWD:/workspace/anonymizer ros-noetic-miniconda:latest -v ${path_to_dataset}:/workspace/anonymizer/data ros-noetic-miniconda:latest /bin/bash -c "cd /workspace/anonymizer /bin/bash"
 # keep the container
-docker run -it --name anonymizer -v $PWD:/workspace/anonymizer -v ${path_to_dataset}:/workspace/anonymizer/data  ros-noetic-miniconda:latest /bin/bash -c "cd /workspace/anonymizer /bin/bash"
+# docker run -it --name anonymizer -v $PWD:/workspace/anonymizer -v ${path_to_dataset}:/workspace/anonymizer/data  ros-noetic-miniconda:latest /bin/bash -c "cd /workspace/anonymizer /bin/bash"
+docker run -it --name anonymizer -v $PWD:/workspace/anonymizer -v ${path_to_dataset}:/workspace/anonymizer/data  ros-noetic-miniconda:latest /bin/bash 
 # using the shell script
 
 
 ```
 ## Install Dependencies
 ```shell
-conda create --name anonymizer python=3.6
+conda create --name anonymizer python=3.6 -y
 conda activate anonymizer
-cd /workspace
+cd /workspace/anonymizer
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
