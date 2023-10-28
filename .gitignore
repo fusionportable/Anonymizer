@@ -3,3 +3,4 @@
 *.pb
 *.bag
 *.pth
+*.DS_store
