@@ -24,6 +24,10 @@ def parse_args():
                         metavar='/path/to/weights_foler',
                         help='Path to the folder where the weights are stored. If no weights with the '
                                 'appropriate names are found they will be downloaded automatically.')
+    parser.add_argument('--vehicle', required=False,
+                        action='store_true',
+                        metavar='/data/from/vehicle/platform',
+                        help='If the data from vehicle, a special mask and ros topic name needs to be specified.')
     return parser.parse_args()
 
 
@@ -40,6 +44,41 @@ def init_anonymizer(weights_path, face_threshold, plate_threshold, obfuscation_p
     }
     anonymizer = Anonymizer(obfuscator=obfuscator, detectors=detectors)
     return anonymizer, detection_thresholds
+
+
+def vehicle(input_bag: rosbag.Bag, output_bag: rosbag.Bag, weights_path: str):
+    # init the anonymizer
+    face_threshold = 0.2
+    plate_threshold = 0.2
+    obfuscation_parameters = '21,2,9'
+    anonymizer, detection_thresholds = init_anonymizer(weights_path, face_threshold, plate_threshold, obfuscation_parameters)
+    
+    # init the stereo topics
+    topic_left = '/stereo/vehicle_frame_left/image_raw/compressed'
+    topic_right = '/stereo/vehicle_frame_right/image_raw/compressed'
+    mask_left = '300, 650, 1024, 768'
+    mask_right = '0, 620, 680, 768'
+
+    # init the image iterator
+    image_iterator_left, total_frames = load_bag_msg(input_bag, topic_left)
+    image_iterator_right, total_frames = load_bag_msg(input_bag, topic_right)
+
+
+    # loop process
+    for left, right in tqdm(zip(image_iterator_left, image_iterator_right), total=total_frames):
+        _ , msg_left, _ = left
+        _ , msg_right, _ = right
+        image_left = convert_ros_img_to_img(msg_left, 'bgr8', True)
+        image_right = convert_ros_img_to_img(msg_right, 'bgr8', True)
+        anonymized_image_left, _ = anonymizer.anonymize_image(image_left, detection_thresholds, mask_left)
+        anonymized_image_right, _ = anonymizer.anonymize_image(image_right, detection_thresholds, mask_right)
+        ros_image_left = convert_img_to_ros_img(anonymized_image_left, 'bgr8', msg_left.header, True)
+        ros_image_right = convert_img_to_ros_img(anonymized_image_right, 'bgr8', msg_right.header, True)
+        output_bag.write(topic_left, ros_image_left, ros_image_left.header.stamp)
+        output_bag.write(topic_right, ros_image_right, ros_image_right.header.stamp)
+    output_bag.close()
+    input_bag.close()
+
 
 
 def main(input_bag: rosbag.Bag, output_bag: rosbag.Bag, weights_path: str):
@@ -75,4 +114,7 @@ def main(input_bag: rosbag.Bag, output_bag: rosbag.Bag, weights_path: str):
 
 if __name__ == "__main__":
     args = parse_args()
-    main(rosbag.Bag(args.input), rosbag.Bag(args.output, 'w'), args.weights)
+    if args.vehicle:
+        vehicle(rosbag.Bag(args.input), rosbag.Bag(args.output, 'w'), args.weights)
+    else:
+        main(rosbag.Bag(args.input), rosbag.Bag(args.output, 'w'), args.weights)

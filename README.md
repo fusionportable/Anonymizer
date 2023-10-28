@@ -1,5 +1,9 @@
 # Installation
 ## Preparation
+- clone the repo
+  ```shell
+  git clone -b http://gitlab.ram-lab.com/ramlab_dataset_sensor/anonymizer.git
+  ```
 - Download the weights (from NAS:ramlab_data/FusionPortable/sensor_data_v2/anonymizer/weights/)
   ```shell
   # two .pb files
@@ -51,6 +55,11 @@ pip install -r requirements.txt
 ```shell
 cd /workspace/anonymizer
 python anonymizer/bin/anonymize_bag.py --input data/folder/to/bag/*.bag --output data/folder/to/bag/*.bag --weights weights/
+```
+- if process on vehicle
+```shell
+# add vehicle flag for difference topic name and masked out area
+python anonymizer/bin/anonymize_bag.py --input data/folder/to/bag/*.bag --output data/folder/to/bag/*.bag --weights weights/ --vehicle
 ```
 
 ## First batch of processing (Evaluated seq on Paper)
