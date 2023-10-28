@@ -31,3 +31,10 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+
+## Notes
+- For data on vehicle, in order to avoid the detection of the logo on hood, we need to mask out the vehicle's hood.
+  ```shell
+  bbox for left: [300, 650, 1024, 768]
+  bbox for right: [0, 620, 680, 768]  
+  ```
