@@ -8,8 +8,8 @@ list=("handheld/room00/room00" "mini_hercules/campus00/campus00" "mini_hercules/
 for sequence_name in "${list[@]}"
 do
     echo "Processing $sequence_name"
-    input="/workspace/data/$sequence_name.bag"
-    output="/workspace/data/$sequence_name_anonymized.bag"
+    input="/workspace/data/${sequence_name}.bag"
+    output="/workspace/data/${sequence_name_anonymized}.bag"
     echo "Input: $input"
     echo "Output: $output"
 
