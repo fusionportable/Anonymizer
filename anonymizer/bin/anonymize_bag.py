@@ -26,7 +26,6 @@ def parse_args():
                                 'appropriate names are found they will be downloaded automatically.')
     parser.add_argument('--vehicle', required=False,
                         action='store_true',
-                        metavar='/data/from/vehicle/platform',
                         help='If the data from vehicle, a special mask and ros topic name needs to be specified.')
     return parser.parse_args()
 
