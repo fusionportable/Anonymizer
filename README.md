@@ -25,6 +25,12 @@ docker run -it --rm -v $PWD:/workspace/anonymizer ros-noetic-miniconda:latest -v
 docker run -it --name anonymizer -v $PWD:/workspace/anonymizer -v ${path_to_dataset}:/workspace/anonymizer/data  ros-noetic-miniconda:latest /bin/bash 
 # using the shell script
 
+# server8
+docker run -it --name anonymizer -v $PWD:/workspace/anonymizer -v /data_shared_fast/Data/jwyu/fp-develop:/workspace/anonymizer/data  11710414/ros-noetic-miniconda:latest /bin/bash 
+# server 11
+docker run -it --name anonymizer -v $PWD:/workspace/anonymizer -v /data_shared/Data/jwyu/FusionPortable_develop:/workspace/anonymizer/data  11710414/ros-noetic-miniconda:latest /bin/bash
+
+
 
 ```
 ## Install Dependencies
@@ -64,7 +70,7 @@ python anonymizer/bin/anonymize_bag.py --input data/folder/to/bag/*.bag --output
 
 ## First batch of processing (Evaluated seq on Paper)
 ```
-Handheld: starbucks00 (running on server13 now), room00
+Handheld: starbucks00, room00
 Quadruped Robot: grass01, room00
 Mini Hercules: campus00, parking00
 Vehicle: campus00, highway00
@@ -78,3 +84,23 @@ Vehicle: campus00, highway00
   bbox for left: [300, 650, 1024, 768]
   bbox for right: [0, 620, 680, 768]  
   ```
+
+#### server ip UST
+```shell
+alias server8="ssh -p 23333 jingwen@eez177.ece.ust.hk"
+alias server5="ssh -p 23333 jingwen@eez061.ece.ust.hk"
+alias server11="ssh -p 23333 jingwen@eez179.ece.ust.hk"
+alias server13="ssh -p 23333 jingwen@eez088.ece.ust.hk"
+alias server3="ssh -p 23333 jingwen@eez175.ece.ust.hk"
+alias server12="ssh -p 23333 jingwen@eez087.ece.ust.hk"
+```
+
+#### Experiments
+- DONE:
+  - vehicle/highway00
+  - handheld/starbucks00, room00
+  - mini_hercules/campus00, parking00
+- Running:
+  - server11 -> vehicle/campus00 ETA: 11h40min
+  - server8 -> quadrupedal/room00 ETA: 8h
+  - server13 -> quadrupedal/grass01 ETA: 6h
