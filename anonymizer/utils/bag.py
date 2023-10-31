@@ -171,3 +171,16 @@ def convert_ros_img_to_img(ros_img, encoding = 'bgr8', compressed = True):
                   img = bridge.imgmsg_to_cv2(ros_img, encoding)
       return img
 
+
+def bag_merge(bag0: rosbag.Bag, bag1: rosbag.Bag, start: float, end: float):
+      """
+      
+      """
+      left_topic: '/stereo/vehicle_frame_left/image_raw/compressed'
+      right_topic: '/stereo/vehicle_frame_right/image_raw/compressed'
+      iterator0_left, left_frames0 = load_bag_msg(bag0, left_topic)
+      iterator0_right, right_frames0 = load_bag_msg(bag0, right_topic)
+      iterator1_left, left_frames1 = load_bag_msg(bag1, left_topic)
+
+
+
