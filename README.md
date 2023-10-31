@@ -96,11 +96,10 @@ alias server12="ssh -p 23333 jingwen@eez087.ece.ust.hk"
 ```
 
 #### Experiments
-- DONE:
-  - vehicle/highway00
-  - handheld/starbucks00, room00
+- DONE: (All stored on server13)
+  - vehicle/highway00(refine required), campus00
+  - handheldroom00
   - mini_hercules/campus00, parking00
+  - quadupedal_robot/room00, grass01
 - Running:
-  - server11 -> vehicle/campus00 ETA: 11h40min
-  - server8 -> quadrupedal/room00 ETA: 8h
-  - server13 -> quadrupedal/grass01 ETA: 6h
+  - server13 -> handheld/starbucks ETA: 13h
