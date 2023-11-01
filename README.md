@@ -98,8 +98,10 @@ alias server12="ssh -p 23333 jingwen@eez087.ece.ust.hk"
 #### Experiments
 - DONE: (All stored on server13)
   - vehicle/highway00(refine required), campus00
-  - handheldroom00
-  - mini_hercules/campus00, parking00
+  - handheld/room00, grass00, starbucks00
+  - mini_hercules/campus00, campus01, parking00
   - quadupedal_robot/room00, grass01
 - Running:
-  - server13 -> handheld/starbucks ETA: 13h
+  - server13 -> mini_hercules/transition00 (ETA: 22h), transition01
+  - server11 -> handheld/room01 (refine required, 1 frame missed in right), starbucks01 (ETA: 10h), tunnel00
+  - server8 -> mini_hercules/parking01(ETA: 20h), parking02, parking03
