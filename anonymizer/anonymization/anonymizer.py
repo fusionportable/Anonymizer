@@ -32,6 +32,25 @@ def save_detections(detections, detections_path):
         json.dump(json_output, output_file, indent=2)
 
 
+def inmask(box, masks):
+    if isinstance(masks, str):
+        masks = [masks]
+
+    for mask in masks:
+        x_min, y_min, x_max, y_max = box.x_min, box.y_min, box.x_max, box.y_max
+        x_min_mask, y_min_mask, x_max_mask, y_max_mask = mask.split(',')
+        x_min_mask = int(x_min_mask)
+        y_min_mask = int(y_min_mask)
+        x_max_mask = int(x_max_mask)
+        y_max_mask = int(y_max_mask)
+        lower_bound = x_min >= x_min_mask and y_min >= y_min_mask
+        higher_bound = x_max <= x_max_mask and y_max <= y_max_mask
+        if not (higher_bound and lower_bound):
+            return True
+    
+    return False
+
+
 class Anonymizer:
     def __init__(self, detectors, obfuscator):
         self.detectors = detectors
@@ -45,18 +64,20 @@ class Anonymizer:
             new_boxes = detector.detect(image, detection_threshold=detection_thresholds[kind])
             if kind == "plate":
                 if mask is not None:
-                    x_min, y_min, x_max, y_max = mask.split(',')
-                    x_min = int(x_min)
-                    y_min = int(y_min)
-                    x_max = int(x_max)
-                    y_max = int(y_max)
+                    # x_min, y_min, x_max, y_max = mask.split(',')
+                    # x_min = int(x_min)
+                    # y_min = int(y_min)
+                    # x_max = int(x_max)
+                    # y_max = int(y_max)
                     masked_boxes = []
                     for new_box in new_boxes:
-                        x_min_new, y_min_new, x_max_new, y_max_new = new_box.x_min, new_box.y_min, new_box.x_max, new_box.y_max
-                        lower_bound = x_min_new >= x_min and y_min_new >= y_min
-                        higher_bound = x_max_new <= x_max and y_max_new <= y_max
-                        if not (lower_bound and higher_bound):
+                        if inmask(new_box, mask):
                             masked_boxes.append(new_box)
+                        # x_min_new, y_min_new, x_max_new, y_max_new = new_box.x_min, new_box.y_min, new_box.x_max, new_box.y_max
+                        # lower_bound = x_min_new >= x_min and y_min_new >= y_min
+                        # higher_bound = x_max_new <= x_max and y_max_new <= y_max
+                        # if not (lower_bound and higher_bound):
+                        #     masked_boxes.append(new_box)
                     new_boxes = masked_boxes
             detected_boxes.extend(new_boxes)
         return self.obfuscator.obfuscate(image, detected_boxes), detected_boxes

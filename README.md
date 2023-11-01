@@ -80,9 +80,14 @@ Vehicle: campus00, highway00
 
 ## Notes
 - For data on vehicle, in order to avoid the detection of the logo on hood, we need to mask out the vehicle's hood.
-  ```shell
+  ```python
   bbox for left: [300, 650, 1024, 768]
   bbox for right: [0, 620, 680, 768]  
+  ```
+- For data on vehilce/highway00 first 10s:
+  ```python
+    right_bbox = [0, 430, 430, 768]
+    left_bbox = [0, 400, 350, 500]
   ```
 
 #### server ip UST

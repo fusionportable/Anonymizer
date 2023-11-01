@@ -54,16 +54,23 @@ def bag_to_images(bag: rosbag.Bag, output_file: str, topic: str, timestamp: str)
 
 
 if __name__ == '__main__':
-      parser = argparse.ArgumentParser(description='Convert a ROS bag with image topic to images with timestamp as names.')
-      parser.add_argument('--bag_file', type=str, help='the bag file to get image data from')
-      parser.add_argument('--output_dir', type=str, help='the path to a directory to write images to')
-      parser.add_argument('--topic', type=str, help='the topic to read image data from')
-      parser.add_argument('--timestamp', type=str, help='the timestamp to save image data from')
-      args = parser.parse_args()
+      # parser = argparse.ArgumentParser(description='Convert a ROS bag with image topic to images with timestamp as names.')
+      # parser.add_argument('--bag_file', type=str, help='the bag file to get image data from')
+      # parser.add_argument('--output_dir', type=str, help='the path to a directory to write images to')
+      # parser.add_argument('--topic', type=str, help='the topic to read image data from')
+      # parser.add_argument('--timestamp', type=str, help='the timestamp to save image data from')
+      bag_file = '/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/vehicle/highway00/highway00.bag'
+      # args = parser.parse_args()
       # open the bag file
-      bag = rosbag.Bag(args.bag_file)
+      # bag = rosbag.Bag(args.bag_file)
+      bag = rosbag.Bag(bag_file)
+      output_dir = '/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/vehicle/highway00/Left_Frame'
+      topic = '/stereo/vehicle_frame_left/image_raw/compressed'
+      # topic = '/stereo/vehicle_frame_right/image_raw/compressed'
+      timestamp = '/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/vehicle/highway00/Left_Frame/timestamp.txt'
       # convert the bag file to images
-      bag_to_images(bag, args.output_dir, args.topic, args.timestamp)
+      bag_to_images(bag, output_dir, topic, timestamp)
+      # bag_to_images(bag, args.output_dir, args.topic, args.timestamp)
       # close the bag file
       bag.close()
       print('Convert Done!')

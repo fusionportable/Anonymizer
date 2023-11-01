@@ -1,7 +1,9 @@
 """
-Utils for rosbag file processing
+      Utils for rosbag file processing
 
 """
+import sys
+sys.path.append('../anonymizer')
 import rosbag
 from tqdm import tqdm
 from sensor_msgs.msg import Image
@@ -10,9 +12,13 @@ import os
 import sys
 from std_msgs.msg import Header
 import numpy as np
+from itertools import zip_longest
+
+from anonymizer.bin import anonymize_bag
 
 del sys.path[1]
 import cv2
+
 
 
 def load_bag_msg(bag: rosbag.Bag, topic: str):
@@ -172,15 +178,155 @@ def convert_ros_img_to_img(ros_img, encoding = 'bgr8', compressed = True):
       return img
 
 
-def bag_merge(bag0: rosbag.Bag, bag1: rosbag.Bag, start: float, end: float):
+def in_interval(abs_time:float, time: float, intervals: list):
       """
-      
+            Args:
+                  time: float: the time to check
+                  intervals: list: the list of intervals
+            Returns:
+                  bool: if the time is in the intervals
       """
-      left_topic: '/stereo/vehicle_frame_left/image_raw/compressed'
-      right_topic: '/stereo/vehicle_frame_right/image_raw/compressed'
+      for interval in intervals:
+            if time >= abs_time + interval[0] and time <= abs_time + interval[1]:
+                  return True
+      return False
+
+
+def ifmask(abs_time:float, time: float):
+      """
+            Args:
+                  time: float: the time to check
+                  intervals: list: the list of intervals
+            Returns:
+                  bool: if the time is in the intervals
+      """
+      if time >= abs_time and time <= abs_time + 10:
+            return True
+      return False
+
+
+def complete_frame(bag_raw: rosbag.Bag, bag_anonymized: rosbag.Bag, bag_out: rosbag.Bag, weights_path: str):
+      right_topic = '/stereo/frame_right/image_raw/compressed'
+      iterator_raw, frames_raw = load_bag_msg(bag_raw, right_topic)
+      iterator_anonymized, frames_anonymized = load_bag_msg(bag_anonymized, right_topic)
+
+       # anonymizer parameters
+      face_threshold = 0.2
+      plate_threshold = 0.2
+      obfuscation_parameters = '21,2,9'
+      # init anonymizer
+      anonymizer, detection_threshold = anonymize_bag.init_anonymizer(weights_path, face_threshold, plate_threshold, obfuscation_parameters)
+
+      for raw, anonymized in tqdm(zip_longest(iterator_raw, iterator_anonymized), total=frames_raw):
+            if anonymized is not None:
+                  _, msg, _ = anonymized
+                  bag_out.write(right_topic, msg, msg.header.stamp)
+            else:
+                  _, msg, _ = raw
+                  image = convert_ros_img_to_img(msg, 'bgr8', True)
+                  anonymized_image, _ = anonymizer.anonymize_image(image, detection_threshold)
+                  ros_image = convert_img_to_ros_img(anonymized_image, 'bgr8', msg.header, True)
+                  bag_out.write(right_topic, ros_image, ros_image.header.stamp)
+
+
+
+def bag_merge(bag0: rosbag.Bag, bag1: rosbag.Bag, bag_out: rosbag.Bag, intervals: list, weights_path: str):
+      """
+            Args:
+                  bag0: raw bag with unobfuscated data
+                  bag1: obfuscated bag with obfuscated data (defected bag)
+                  bag_out: output bag with obfuscated data (refined bag)
+      """
+
+      left_topic = '/stereo/vehicle_frame_left/image_raw/compressed'
+      right_topic = '/stereo/vehicle_frame_right/image_raw/compressed'
       iterator0_left, left_frames0 = load_bag_msg(bag0, left_topic)
       iterator0_right, right_frames0 = load_bag_msg(bag0, right_topic)
       iterator1_left, left_frames1 = load_bag_msg(bag1, left_topic)
+      iterator1_right, right_frames1 = load_bag_msg(bag1, right_topic)
+      
+      # anonymizer parameters
+      face_threshold = 0.2
+      plate_threshold = 0.2
+      obfuscation_parameters = '21,2,9'
+      # init anonymizer
+      anonymizer, detection_threshold = anonymize_bag.init_anonymizer(weights_path, face_threshold, plate_threshold, obfuscation_parameters)
+
+
+      # process left frame topic
+      print("Processing left frame topic")
+      begin = 0
+      for left0, left1 in tqdm(zip_longest(iterator0_left, iterator1_left), total=left_frames0):
+            
+            if left1 is not None:
+                  _, msg0, _ = left0
+                  _, msg1, _ = left1
+
+                  assert msg0.header.stamp.to_sec() == msg1.header.stamp.to_sec()
+
+                  if begin == 0:
+                        begin = msg0.header.stamp.to_sec()
+
+                  if in_interval(begin, msg0.header.stamp.to_sec(), intervals):
+                        bag_out.write(left_topic, msg0, msg0.header.stamp)
+                        
+                  elif ifmask(begin, msg0.header.stamp.to_sec()):
+                        image = convert_ros_img_to_img(msg0, 'bgr8', True)
+                        left_mask = ['0,400,350,500','300,650,1024,768']
+                        anonymized_image, _ = anonymizer.anonymize_image(image, detection_threshold, left_mask)
+                        ros_image = convert_img_to_ros_img(anonymized_image, 'bgr8', msg0.header, True)
+                        bag_out.write(left_topic, ros_image, ros_image.header.stamp)
+                  else:
+                        bag_out.write(left_topic, msg1, msg1.header.stamp)
+
+            else:
+                  _, msg0, _ = left0
+                  image = convert_ros_img_to_img(msg0, 'bgr8', True)
+                  anonymized_image, _ = anonymizer.anonymize_image(image, detection_threshold)
+                  ros_image = convert_img_to_ros_img(anonymized_image, 'bgr8', msg0.header, True)
+                  bag_out.write(left_topic, ros_image, ros_image.header.stamp)
+
+      print("Processing right frame topic")
+      # process right frame topic
+      begin = 0
+      for right0, right1 in tqdm(zip_longest(iterator0_right, iterator1_right), total=right_frames0):
+
+            _, msg0, _ = right0
+            _, msg1, _ = right1
+
+            assert msg0.header.stamp.to_sec() == msg1.header.stamp.to_sec()
+
+            if begin == 0:
+                  begin = msg0.header.stamp.to_sec()
+            
+            if in_interval(begin, msg0.header.stamp.to_sec(), intervals):
+                  bag_out.write(right_topic, msg0, msg0.header.stamp)
+            elif ifmask(begin, msg0.header.stamp.to_sec()):
+                  image = convert_ros_img_to_img(msg0, 'bgr8', True)
+                  right_mask = ['0,420,430,768','0,620,680,768']
+                  anonymized_image, _ = anonymizer.anonymize_image(image, detection_threshold, right_mask)
+                  ros_image = convert_img_to_ros_img(anonymized_image, 'bgr8', msg0.header, True)
+                  bag_out.write(right_topic, ros_image, ros_image.header.stamp)
+            else:
+                  bag_out.write(right_topic, msg1, msg1.header.stamp)
+      
+      print("close the bag for memory save")
+      bag0.close()
+      bag1.close()
+      bag_out.close()
+      print("Done")
+
+
+if __name__ == "__main__":
+      bag0 = rosbag.Bag('/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/vehicle/highway00/highway00.bag')
+      bag1 = rosbag.Bag('/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/vehicle/highway00/highway00_anonymized.bag')
+      bag_out = rosbag.Bag('/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/vehicle/highway00/highway00_refined01.bag', 'w')
+      weights_path = '/home/jarvis/jw_ws/FusionPortable_utils/release/anonymizer/weights'
+      intervals = [[50,62], [147, 162], [270,288], [293, 330], [343, 346], [353, 371], [510, 520], [626,628], [229, 285]]
+      mask_interval = [0, 10]
+      bag_merge(bag0, bag1, bag_out, intervals, weights_path)
+
+
 
 
 

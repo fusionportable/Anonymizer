@@ -4,6 +4,7 @@ import argparse
 import rosbag
 from tqdm import tqdm
 
+
 from anonymizer.anonymization import Anonymizer
 from anonymizer.detection import Detector, get_weights_path
 from anonymizer.obfuscation import Obfuscator
@@ -112,8 +113,9 @@ def main(input_bag: rosbag.Bag, output_bag: rosbag.Bag, weights_path: str):
     input_bag.close()
 
 if __name__ == "__main__":
-    args = parse_args()
-    if args.vehicle:
-        vehicle(rosbag.Bag(args.input), rosbag.Bag(args.output, 'w'), args.weights)
-    else:
-        main(rosbag.Bag(args.input), rosbag.Bag(args.output, 'w'), args.weights)
+    pass
+    # args = parse_args()
+    # if args.vehicle:
+    #     vehicle(rosbag.Bag(args.input), rosbag.Bag(args.output, 'w'), args.weights)
+    # else:
+    #     main(rosbag.Bag(args.input), rosbag.Bag(args.output, 'w'), args.weights)
