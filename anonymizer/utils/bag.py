@@ -14,7 +14,7 @@ from std_msgs.msg import Header
 import numpy as np
 from itertools import zip_longest
 
-from anonymizer.bin import anonymize_bag
+# from anonymizer.bin import anonymize_bag
 
 del sys.path[1]
 import cv2
