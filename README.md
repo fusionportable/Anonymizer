@@ -86,7 +86,7 @@ Vehicle: campus00, highway00
   ```
 - For data on vehilce/highway00 first 10s:
   ```python
-    right_bbox = [0, 430, 430, 768]
+    right_bbox = [0, 420, 430, 768]
     left_bbox = [0, 400, 350, 500]
   ```
 
@@ -103,10 +103,10 @@ alias server12="ssh -p 23333 jingwen@eez087.ece.ust.hk"
 #### Experiments
 - DONE: (All stored on server13)
   - vehicle/highway00(refine required), campus00
-  - handheld/room00, grass00, starbucks00
-  - mini_hercules/campus00, campus01, parking00
+  - handheld/room00, room01 (refined), grass00, starbucks00, starbucks01, tunnel00
+  - mini_hercules/campus00, campus01, parking00, parking01, parking02, parking03, transition00
   - quadupedal_robot/room00, grass01
 - Running:
-  - server13 -> mini_hercules/transition00 (ETA: 22h), transition01
-  - server11 -> handheld/room01 (refine required, 1 frame missed in right), starbucks01 (ETA: 10h), tunnel00
-  - server8 -> mini_hercules/parking01(ETA: 20h), parking02, parking03
+  - server13 -> mini_hercules/transition01
+  - server11 -> quadruped/grass00
+  - server8 ->  quadruped/transition00, tunnel00

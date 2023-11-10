@@ -45,9 +45,9 @@ def inmask(box, masks):
         y_max_mask = int(y_max_mask)
         lower_bound = x_min >= x_min_mask and y_min >= y_min_mask
         higher_bound = x_max <= x_max_mask and y_max <= y_max_mask
-        if not (higher_bound and lower_bound):
+        if (higher_bound and lower_bound):
             return True
-    
+        
     return False
 
 
@@ -71,7 +71,7 @@ class Anonymizer:
                     # y_max = int(y_max)
                     masked_boxes = []
                     for new_box in new_boxes:
-                        if inmask(new_box, mask):
+                        if not inmask(new_box, mask):
                             masked_boxes.append(new_box)
                         # x_min_new, y_min_new, x_max_new, y_max_new = new_box.x_min, new_box.y_min, new_box.x_max, new_box.y_max
                         # lower_bound = x_min_new >= x_min and y_min_new >= y_min

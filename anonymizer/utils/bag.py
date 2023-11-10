@@ -202,6 +202,7 @@ def ifmask(abs_time:float, time: float):
       """
       if time >= abs_time and time <= abs_time + 10:
             return True
+      
       return False
 
 
@@ -217,6 +218,7 @@ def complete_frame(bag_raw: rosbag.Bag, bag_anonymized: rosbag.Bag, bag_out: ros
       # init anonymizer
       anonymizer, detection_threshold = anonymize_bag.init_anonymizer(weights_path, face_threshold, plate_threshold, obfuscation_parameters)
 
+      print("Processing right frame topic")
       for raw, anonymized in tqdm(zip_longest(iterator_raw, iterator_anonymized), total=frames_raw):
             if anonymized is not None:
                   _, msg, _ = anonymized
@@ -227,6 +229,20 @@ def complete_frame(bag_raw: rosbag.Bag, bag_anonymized: rosbag.Bag, bag_out: ros
                   anonymized_image, _ = anonymizer.anonymize_image(image, detection_threshold)
                   ros_image = convert_img_to_ros_img(anonymized_image, 'bgr8', msg.header, True)
                   bag_out.write(right_topic, ros_image, ros_image.header.stamp)
+      
+      print("Processing left frame topic")
+      left_topic = '/stereo/frame_left/image_raw/compressed'
+      iterator_anonymized, frames_anonymized = load_bag_msg(bag_anonymized, left_topic)
+
+      for left in tqdm(iterator_anonymized, total=frames_anonymized):
+            _, msg, _ = left
+            bag_out.write(left_topic, msg, msg.header.stamp)
+      
+      print("close the bag for memory save")
+      bag_raw.close()
+      bag_anonymized.close()
+      bag_out.close()
+      print("Done")
 
 
 
@@ -269,10 +285,10 @@ def bag_merge(bag0: rosbag.Bag, bag1: rosbag.Bag, bag_out: rosbag.Bag, intervals
 
                   if in_interval(begin, msg0.header.stamp.to_sec(), intervals):
                         bag_out.write(left_topic, msg0, msg0.header.stamp)
-                        
+
                   elif ifmask(begin, msg0.header.stamp.to_sec()):
                         image = convert_ros_img_to_img(msg0, 'bgr8', True)
-                        left_mask = ['0,400,350,500','300,650,1024,768']
+                        left_mask = ['0,430,430,768','300,650,1024,768']
                         anonymized_image, _ = anonymizer.anonymize_image(image, detection_threshold, left_mask)
                         ros_image = convert_img_to_ros_img(anonymized_image, 'bgr8', msg0.header, True)
                         bag_out.write(left_topic, ros_image, ros_image.header.stamp)
@@ -303,7 +319,7 @@ def bag_merge(bag0: rosbag.Bag, bag1: rosbag.Bag, bag_out: rosbag.Bag, intervals
                   bag_out.write(right_topic, msg0, msg0.header.stamp)
             elif ifmask(begin, msg0.header.stamp.to_sec()):
                   image = convert_ros_img_to_img(msg0, 'bgr8', True)
-                  right_mask = ['0,420,430,768','0,620,680,768']
+                  right_mask = ['0,390,400,768','0,620,680,768']
                   anonymized_image, _ = anonymizer.anonymize_image(image, detection_threshold, right_mask)
                   ros_image = convert_img_to_ros_img(anonymized_image, 'bgr8', msg0.header, True)
                   bag_out.write(right_topic, ros_image, ros_image.header.stamp)
@@ -320,11 +336,19 @@ def bag_merge(bag0: rosbag.Bag, bag1: rosbag.Bag, bag_out: rosbag.Bag, intervals
 if __name__ == "__main__":
       bag0 = rosbag.Bag('/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/vehicle/highway00/highway00.bag')
       bag1 = rosbag.Bag('/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/vehicle/highway00/highway00_anonymized.bag')
-      bag_out = rosbag.Bag('/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/vehicle/highway00/highway00_refined01.bag', 'w')
+      bag_out = rosbag.Bag('/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/vehicle/highway00/highway00_refined00.bag', 'w')
       weights_path = '/home/jarvis/jw_ws/FusionPortable_utils/release/anonymizer/weights'
       intervals = [[50,62], [147, 162], [270,288], [293, 330], [343, 346], [353, 371], [510, 520], [626,628], [229, 285]]
       mask_interval = [0, 10]
       bag_merge(bag0, bag1, bag_out, intervals, weights_path)
+
+
+# if __name__ == "__main__":
+#       bag0 = rosbag.Bag('/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/handheld/room01/room01.bag')
+#       bag1 = rosbag.Bag('/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/handheld/room01/room01_anonymized.bag')
+#       weights_path = '/home/jarvis/jw_ws/FusionPortable_utils/release/anonymizer/weights'
+#       bag_out = rosbag.Bag('/mnt/DATA_JW/FusionPortable_dataset_develop/sensor_data/handheld/room01/room01_refined00.bag', 'w')
+#       complete_frame(bag0, bag1, bag_out, weights_path)
 
 
 

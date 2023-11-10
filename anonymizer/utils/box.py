@@ -28,10 +28,14 @@ def draw_bbox(image, bbox):
 if __name__  == "__main__":
     image = cv2.imread("/home/jarvis/jw_ws/FusionPortable_utils/release/anonymizer/test/right.png")
 
-    bbox = [0, 420, 430, 768]
+    # bbox = [0, 620, 680, 768]
     
-    # right bbox = [0, 430, 430, 768]
-    # left bbox = [0, 400, 350, 500]
+    # bbox = [0, 430, 430, 768]
+    # bbox = [0,400,430,768]
+    # '0,420,430,768','0,620,680,768'
+    # ['0,430,430,768','300,650,1024,768']
 
-    draw_bbox(image, bbox)
+    # ['0,400,430,768','0,620,680,768']
+    for bbox in [[0,390,400,768], [0,620,680,768]]:
+        draw_bbox(image, bbox)
     cv2.imwrite("/home/jarvis/jw_ws/FusionPortable_utils/release/anonymizer/test/right_test.png", image)
