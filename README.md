@@ -107,6 +107,6 @@ alias server12="ssh -p 23333 jingwen@eez087.ece.ust.hk"
   - mini_hercules/campus00, campus01, parking00, parking01, parking02, parking03, transition00
   - quadupedal_robot(completed)/room00, grass00, grass01, transition00, tunnel00
 - Running:
-  - server13 -> transition01(running) ETA: 20h
-  - server11 -> 
-  - server8 ->  
+  - server13 -> mini_hecules/transition01(running) ETA: 20h
+  - server11 -> vehicle/campus01 ETA: 50h, downhill00
+  - server8 ->  idle
