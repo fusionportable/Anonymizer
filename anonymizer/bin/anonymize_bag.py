@@ -113,9 +113,9 @@ def main(input_bag: rosbag.Bag, output_bag: rosbag.Bag, weights_path: str):
     input_bag.close()
 
 if __name__ == "__main__":
-    pass
-    # args = parse_args()
-    # if args.vehicle:
-    #     vehicle(rosbag.Bag(args.input), rosbag.Bag(args.output, 'w'), args.weights)
-    # else:
-    #     main(rosbag.Bag(args.input), rosbag.Bag(args.output, 'w'), args.weights)
+    # pass
+    args = parse_args()
+    if args.vehicle:
+        vehicle(rosbag.Bag(args.input), rosbag.Bag(args.output, 'w'), args.weights)
+    else:
+        main(rosbag.Bag(args.input), rosbag.Bag(args.output, 'w'), args.weights)
