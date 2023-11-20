@@ -102,11 +102,11 @@ alias server12="ssh -p 23333 jingwen@eez087.ece.ust.hk"
 
 #### Experiments
 - DONE: (All stored on server13)
-  - vehicle/highway00(refined), campus00
+  - vehicle/highway00(refined), highway01(refine required) campus00, campus01, downhill00, multilayer_parking00,
   - handheld(completed)/room00, room01 (refined), grass00, starbucks00, starbucks01, tunnel00
-  - mini_hercules/campus00, campus01, parking00, parking01, parking02, parking03, transition00
+  - mini_hercules(completed)/campus00, campus01, parking00, parking01, parking02, parking03, transition00, transition01
   - quadupedal_robot(completed)/room00, grass00, grass01, transition00, tunnel00
 - Running:
-  - server13 -> mini_hecules/transition01(running) ETA: 20h
-  - server11 -> vehicle/campus01 ETA: 50h, downhill00
+  - server13 -> street00 (running) ETA: 25 min, tunnel00 
+  - server11 -> idle
   - server8 ->  idle
