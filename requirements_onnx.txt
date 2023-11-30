@@ -1,0 +1,6 @@
+onnxruntime-gpu==1.14
+Pillow
+matplotlib
+tqdm
+scipy
+opencv-python-headless
