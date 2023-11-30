@@ -146,7 +146,19 @@ Vehicle: campus00, highway00
   ```
 
 - Install dependencies in docker:
+  Note that, here we use CUDA11.6, which is compatiable with onnxruntime-gpu 11.4. Always check the version [compatibility](https://onnxruntime.ai/docs/execution-
+providers/CUDA-ExecutionProvider.html) before runinng.
   ```zsh
   apt update && apt install pip -y
   pip install -r requirements_onnx.txt
   ```
+
+- RUN
+  ```zsh
+  python anonymizer/bin/anonymize_onnx.py --input=/path/to/input/image/folder --image-output=/path/to/output/image/folder --weight=/path/to/onnx_weights
+  ```
+
+- TODO:
+  - [ ] A docker container with ROS1 and CUDA11.6 compatibility.
+  - [ ] Add scripts directly process the rosbags.
+  - [ ] Refactor the anonymizer in the same branch that is compatiable to plug in detector and obfuscators.
