@@ -56,8 +56,10 @@ def images_to_bag(input_images: str, reference_bag: rosbag.Bag, output_bag: rosb
             line = order.readline()
             line = line.strip('\n')
             image_name = line.split(' ')[-1]
-            header = Header(stamp=rospy.Time.from_sec(timestamp), frame_id='frame_left')
-            cv_image = cv2.imread(os.path.join(input_images, image_name + '.png'))
+            header = Header(stamp=rospy.Time.from_sec(timestamp), frame_id='frame_right')
+            cv_image = cv2.imread(os.path.join(input_images, image_name))
+            # print(cv_image)
+            # cv_image = np.array(cv_image)
             img_msg = convert_img_to_ros_img(cv_image, 'bgr8', header, compressed=True)
             output_bag.write(topic, img_msg, img_msg.header.stamp)
 

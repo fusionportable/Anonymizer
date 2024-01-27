@@ -13,3 +13,5 @@ do
     python anonymizer/bin/anonymize_bag.py --input $input --output $output --weights weights
     echo "Done processing $sequence_name"
 done
+
+python anonymizer/bin/anonymize_bag.py --input data/mini_hercules/20230614_1739_building_pedestrain_wo_encoder/20230614_1739_building_pedestrain_wo_encoder.bag --output data/mini_hercules/20230614_1739_building_pedestrain_wo_encoder/20230614_1739_building_pedestrain_wo_encoder_anonymized.bag --weights weights/
