@@ -159,6 +159,6 @@ providers/CUDA-ExecutionProvider.html) before runinng.
   ```
 
 - TODO:
-  - [ ] A docker container with ROS1 and CUDA11.6 compatibility.
+  - [x] A docker container with ROS1 and CUDA11.6 compatibility.
   - [ ] Add scripts directly process the rosbags.
   - [ ] Refactor the anonymizer in the same branch that is compatiable to plug in detector and obfuscators.
