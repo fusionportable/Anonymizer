@@ -8,7 +8,7 @@ An anonymizer for pravicy protection of human faces and vehicle plates. This is 
   ```shell
   git clone -b http://gitlab.ram-lab.com/ramlab_dataset_sensor/anonymizer.git
   ```
-- Download the weights (from NAS:ramlab_data/FusionPortable/sensor_data_v2/anonymizer/weights/)
+- Download the weights (from NAS:ramlab_data/FusionPortable/sensor_data_v2/anonymizer/weights/ or [google drive](https://drive.google.com/drive/folders/1cuu-lvG8Z6j8K9f66vxztk5XzaqRGI-e?usp=drive_link))
   ```shell
   # two .pb files
   weights_plate_v1.0.0.pb
@@ -133,7 +133,7 @@ Vehicle: campus00, highway00
 
   python3 -m tf2onnx.convert --graphdef weights/plate.pb --output plate.onnx --inputs image_tensor:0 --outputs num_detections:0,detection_scores:0,detection_boxes:0
   ```
-  If you bother to do this step you can directly download the exported onnx model from NAS@[ramlab_data/FusionPortable/sensor_data_v2/anonymizer/weights_onnx/](http://gofile.me/4jm56/GNx2Hr1lY). If you are not a registered user of ramlab's nas, you can download from the link with password `fusionportable`.
+  If you bother to do this step you can directly download the exported onnx model from NAS@[ramlab_data/FusionPortable/sensor_data_v2/anonymizer/weights_onnx/](http://gofile.me/4jm56/GNx2Hr1lY) or via [google drive](https://drive.google.com/drive/folders/1cuu-lvG8Z6j8K9f66vxztk5XzaqRGI-e?usp=drive_link). If you are not a registered user of ramlab's nas, you can download from the link with password `fusionportable`.
 
 ### Run
 - Check out `onnx` branch
