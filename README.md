@@ -6,7 +6,7 @@ An anonymizer for pravicy protection of human faces and vehicle plates. This is 
 ### Preparation
 - Clone the Repo
   ```shell
-  git clone https://github.com/jarvisyjw/Anonymizer.git
+  git clone https://github.com/fusionportable/Anonymizer.git
   ```
 - Download the [pre-trained weights](https://drive.google.com/drive/folders/1cuu-lvG8Z6j8K9f66vxztk5XzaqRGI-e?usp=drive_link)
   
