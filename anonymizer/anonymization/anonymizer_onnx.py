@@ -36,8 +36,6 @@ class Anonymizer:
     def __init__(self, detectors, obfuscator):
         self.detectors = detectors
         self.obfuscator = obfuscator
-        # onnxruntime provider
-        # self.provider = provider
 
     def anonymize_image(self, image, detection_thresholds):
         assert set(self.detectors.keys()) == set(detection_thresholds.keys()),\
@@ -56,8 +54,7 @@ class Anonymizer:
 
         files = []
         for file_type in file_types:
-            # print(list(Path(input_path).glob(f'**/*.{file_type}')))
-            files.extend(list(Path(input_path).glob(f'**/*.{file_type}')))
+            files.extend(list(Path(input_path).glob(f'*.{file_type}')))
 
         for input_image_path in tqdm(files):
             # Create output directory
