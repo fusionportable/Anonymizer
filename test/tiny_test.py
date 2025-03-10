@@ -36,6 +36,8 @@ def parse_args():
                         metavar='0.3',
                         help='Detection confidence needed to anonymize a detected license plate. '
                                 'Must be in [0.001, 1.0]')
+    parser.add_argument('--ext', required=False, default='jpg',
+                        help='Image extension')
     return parser.parse_args()
 
 class ImagesDataset:
@@ -78,7 +80,7 @@ def main(args, providers):
     anonymizer, detection_thresholds = init_anonymizer(weights_path, face_threshold, plate_threshold, obfuscation_parameters, providers)
     
     # run the anonymizer
-    anonymizer.anonymize_images(args.input, args.output, detection_thresholds, ['jpg'], False)
+    anonymizer.anonymize_images(args.input, args.output, detection_thresholds, [args.ext], False)
 
 if __name__ == "__main__":
     providers = [("CUDAExecutionProvider", {"device_id": '0'}), 'CPUExecutionProvider']
